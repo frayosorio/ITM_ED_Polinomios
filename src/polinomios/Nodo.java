@@ -12,12 +12,20 @@ public class Nodo {
         siguiente = null;
     }
 
+    public Nodo() {
+    }
+
     public double getCoeficiente() {
         return coeficiente;
     }
 
     public int getExponente() {
         return exponente;
+    }
+
+    public void actualizar(double coeficiente, int exponente) {
+        this.coeficiente = coeficiente;
+        this.exponente = exponente;
     }
 
 }
