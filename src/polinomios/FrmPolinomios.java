@@ -198,7 +198,17 @@ public class FrmPolinomios extends javax.swing.JFrame {
         switch (cmbOperacion.getSelectedIndex()) {
             case 0:
                 //Suma
-                polinomioR=Polinomio.sumar(polinomio1, polinomio2);
+                polinomioR = Polinomio.sumar(polinomio1, polinomio2);
+                polinomioR.mostrar(lblPolinomioR);
+                break;
+            case 1:
+                //Resta
+                polinomioR = Polinomio.restar(polinomio1, polinomio2);
+                polinomioR.mostrar(lblPolinomioR);
+                break;
+            case 2:
+                //Multiplicacion
+                polinomioR = Polinomio.multiplicar(polinomio1, polinomio2);
                 polinomioR.mostrar(lblPolinomioR);
                 break;
         }
