@@ -9,7 +9,6 @@ import javax.swing.WindowConstants;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-
 public class FrmPolinomios extends JFrame {
 
     private JButton btnAgregar;
@@ -133,7 +132,23 @@ public class FrmPolinomios extends JFrame {
         getContentPane().add(lblPolinomioRD);
     }
 
+    Polinomio p1 = new Polinomio();
+    Polinomio p2 = new Polinomio();
+
     private void btnAgregarClick(ActionEvent evt) {
+        double coef = Double.parseDouble(txtCoeficiente.getText());
+        int expo = Integer.parseInt(txtExponente.getText());
+
+        switch (cmbPolinomio.getSelectedIndex()) {
+            case 0:
+                p1.agregar(new Nodo(coef, expo));
+                p1.mostrar(lblPolinomio1);
+                break;
+            case 1:
+                p2.agregar(new Nodo(coef, expo));
+                p2.mostrar(lblPolinomio2);
+                break;
+        }
     }
 
     private void btnCalcularClick(ActionEvent evt) {
