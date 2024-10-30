@@ -9,6 +9,10 @@ public class Polinomio {
         cabeza = null;
     }
 
+    public Nodo getCabeza() {
+        return cabeza;
+    }
+
     public void agregar(Nodo n) {
         if (n != null) {
             if (cabeza == null) {
@@ -58,6 +62,10 @@ public class Polinomio {
         }
     }
 
+    public void limpiar() {
+        cabeza = null;
+    }
+
     public String[] getTextos() {
         String[] lineas = new String[2];
         String espacio = " ";
@@ -89,6 +97,40 @@ public class Polinomio {
         lineas[1] = lineas[1].replace(" ", espacio);
         lbl.setFont(new Font("Courier New", Font.PLAIN, 12));
         lbl.setText("<html>" + lineas[0] + "<br>" + lineas[1] + "</html>");
+    }
+
+    // ********** Metodos estaticos **********
+
+    public static Polinomio sumar(Polinomio p1, Polinomio p2) {
+        Polinomio pR = new Polinomio();
+
+        Nodo apuntador1 = p1.getCabeza();
+        Nodo apuntador2 = p2.getCabeza();
+
+        while (apuntador1 != null || apuntador2 != null) {
+            Nodo n = null;
+
+            if (apuntador1 != null && apuntador2 != null && apuntador1.getExponente() == apuntador2.getExponente()) {
+                if (apuntador1.getCoeficiente() + apuntador2.getCoeficiente() != 0) {
+                    n = new Nodo(apuntador1.getCoeficiente() + apuntador2.getCoeficiente(), apuntador1.getExponente());
+                }
+                apuntador1 = apuntador1.siguiente;
+                apuntador2 = apuntador2.siguiente;
+            } else if (apuntador2 == null
+                    || (apuntador1 != null && apuntador1.getExponente() < apuntador2.getExponente())) {
+                n = new Nodo(apuntador1.getCoeficiente(), apuntador1.getExponente());
+                apuntador1 = apuntador1.siguiente;
+            } else {
+                n = new Nodo(apuntador2.getCoeficiente(), apuntador2.getExponente());
+                apuntador2 = apuntador2.siguiente;
+            }
+
+            if (n != null) {
+                pR.agregar(n);
+            }
+        }
+
+        return pR;
     }
 
 }

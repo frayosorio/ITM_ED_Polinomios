@@ -152,6 +152,37 @@ public class FrmPolinomios extends JFrame {
     }
 
     private void btnCalcularClick(ActionEvent evt) {
+        Polinomio pR;
+        switch (cmbOperacion.getSelectedIndex()) {
+            case 0:
+                // sumar
+                pR = Polinomio.sumar(p1, p2);
+                pR.mostrar(lblPolinomioR);
+                break;
+            case 1:
+                // restar
+                break;
+            case 2:
+                // multiplicar
+                break;
+            case 3:
+                // dividir
+                break;
+            case 4:
+                // derivar
+                break;
+
+        }
+    }
+
+    private void btnLimpiarClick(ActionEvent evt) {
+        if (cmbPolinomio.getSelectedIndex() == 0) {
+            p1.limpiar();
+            p1.mostrar(lblPolinomio1);
+        } else {
+            p2.limpiar();
+            p2.mostrar(lblPolinomio2);
+        }
     }
 
 }
