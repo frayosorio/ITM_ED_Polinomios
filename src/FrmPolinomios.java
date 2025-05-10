@@ -3,17 +3,23 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
+import entidades.Nodo;
+import entidades.Operacion;
+import entidades.Polinomio;
+import servicios.Archivo;
+import servicios.ServicioPolinomio;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FrmPolinomios extends JFrame {
 
-    private JButton btnAgregar;
-    private JButton btnCalcular;
-    private JButton btnLimpiar;
     private JComboBox cmbOperacion;
     private JComboBox cmbPolinomio;
     private JLabel lblCoeficiente;
@@ -26,6 +32,12 @@ public class FrmPolinomios extends JFrame {
     private JTextField txtCoeficiente;
     private JTextField txtExponente;
 
+    private String nombreArchivo = "";
+    private List<Operacion> operaciones = new ArrayList<>();
+    private String[] tiposOperaciones = new String[] { "Suma", "Resta", "Multiplicacion", "Division", "Derivada" };
+
+    Polinomio p1 = new Polinomio();
+    Polinomio p2 = new Polinomio();
 
     public FrmPolinomios() {
         lblCoeficiente = new JLabel();
@@ -34,14 +46,15 @@ public class FrmPolinomios extends JFrame {
         lblExponente = new JLabel();
         txtExponente = new JTextField();
         cmbPolinomio = new JComboBox();
-        btnAgregar = new JButton();
-        btnLimpiar = new JButton();
+        JButton btnAgregar = new JButton();
+        JButton btnLimpiar = new JButton();
         lblPolinomio1 = new JLabel();
         lblPolinomio2 = new JLabel();
         cmbOperacion = new JComboBox();
         lblPolinomioR = new JLabel();
         lblPolinomioRD = new JLabel();
-        btnCalcular = new JButton();
+        JButton btnCalcular = new JButton();
+        JButton btnGuardar = new JButton();
 
         setSize(600, 450);
         setTitle("Polinomios");
@@ -113,9 +126,19 @@ public class FrmPolinomios extends JFrame {
         });
 
         cmbOperacion.setModel(
-                new DefaultComboBoxModel(new String[] { "Suma", "Resta", "Multiplicacion", "Division", "Derivada" }));
+                new DefaultComboBoxModel(tiposOperaciones));
         cmbOperacion.setBounds(120, 210, 100, 25);
         getContentPane().add(cmbOperacion);
+
+        btnGuardar.setText("Guardar");
+        btnGuardar.setBounds(230, 210, 100, 25);
+        getContentPane().add(btnGuardar);
+
+        btnGuardar.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                btnGuardarClick();
+            }
+        });
 
         lblPolinomioR.setBackground(new java.awt.Color(255, 204, 153));
         lblPolinomioR.setOpaque(true);
@@ -135,14 +158,66 @@ public class FrmPolinomios extends JFrame {
     }
 
     private void btnAgregarClick(ActionEvent evt) {
-
+        int exponente = Integer.parseInt(txtExponente.getText());
+        int coeficiente = Integer.parseInt(txtCoeficiente.getText());
+        Nodo nodo = new Nodo(exponente, coeficiente);
+        switch (cmbPolinomio.getSelectedIndex()) {
+            case 0:
+                p1.agregar(nodo);
+                p1.mostrar(lblPolinomio1);
+                break;
+            case 1:
+                p2.agregar(nodo);
+                p2.mostrar(lblPolinomio2);
+                break;
+        }
     }
 
     private void btnLimpiarClick(ActionEvent evt) {
+        switch (cmbPolinomio.getSelectedIndex()) {
+            case 0:
+                p1.limpiar();
+                p1.mostrar(lblPolinomio1);
+                break;
+            case 1:
+                p2.limpiar();
+                p2.mostrar(lblPolinomio2);
+                break;
+        }
+    }
+
+    private Polinomio calcular() {
+        switch (cmbOperacion.getSelectedIndex()) {
+            case 0: // suma
+                return  ServicioPolinomio.sumar(p1, p2);
+            case 1: // resta
+                return ServicioPolinomio.restar(p1, p2);
+            case 2: // multiplicación
+                return ServicioPolinomio.multiplicar(p1, p2);
+            case 4: // derivar
+                return cmbPolinomio.getSelectedIndex() == 0 ? p1.getDerivada() : p2.getDerivada();
+        }
+        return new Polinomio();
     }
 
     private void btnCalcularClick(ActionEvent evt) {
+        var pR = calcular();
+        pR.mostrar(lblPolinomioR);
+    }
 
+    private void btnGuardarClick() {
+        if (nombreArchivo.equals("")) {
+            nombreArchivo = Archivo.elegirArchivo();
+        }
+        if (!nombreArchivo.equals("")) {
+            var pR = calcular();
+            var operacion = new Operacion(tiposOperaciones[cmbOperacion.getSelectedIndex()],
+            p1.toDTO(), p2.toDTO(), pR.toDTO());
+            operaciones.add(operacion);
+
+            Archivo.guardarJson(nombreArchivo, operaciones);
+            JOptionPane.showMessageDialog(null, "Archivo guardado con exito");
+        }
     }
 
 }
