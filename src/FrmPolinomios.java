@@ -7,6 +7,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+
 import entidades.Nodo;
 import entidades.Operacion;
 import entidades.Polinomio;
@@ -55,6 +57,7 @@ public class FrmPolinomios extends JFrame {
         lblPolinomioRD = new JLabel();
         JButton btnCalcular = new JButton();
         JButton btnGuardar = new JButton();
+        JButton btnCargar = new JButton();
 
         setSize(600, 450);
         setTitle("Polinomios");
@@ -140,6 +143,16 @@ public class FrmPolinomios extends JFrame {
             }
         });
 
+        btnCargar.setText("Cargar");
+        btnCargar.setBounds(340, 210, 100, 25);
+        getContentPane().add(btnCargar);
+
+        btnCargar.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                btnCargarClick();
+            }
+        });
+
         lblPolinomioR.setBackground(new java.awt.Color(255, 204, 153));
         lblPolinomioR.setOpaque(true);
         lblPolinomioR.setBounds(0, 250, 600, 50);
@@ -189,7 +202,7 @@ public class FrmPolinomios extends JFrame {
     private Polinomio calcular() {
         switch (cmbOperacion.getSelectedIndex()) {
             case 0: // suma
-                return  ServicioPolinomio.sumar(p1, p2);
+                return ServicioPolinomio.sumar(p1, p2);
             case 1: // resta
                 return ServicioPolinomio.restar(p1, p2);
             case 2: // multiplicación
@@ -212,11 +225,24 @@ public class FrmPolinomios extends JFrame {
         if (!nombreArchivo.equals("")) {
             var pR = calcular();
             var operacion = new Operacion(tiposOperaciones[cmbOperacion.getSelectedIndex()],
-            p1.toDTO(), p2.toDTO(), pR.toDTO());
+                    p1.toDTO(), p2.toDTO(), pR.toDTO());
             operaciones.add(operacion);
 
             Archivo.guardarJson(nombreArchivo, operaciones);
             JOptionPane.showMessageDialog(null, "Archivo guardado con exito");
+        }
+    }
+
+    private void btnCargarClick() {
+        nombreArchivo = Archivo.elegirArchivo();
+        if (!nombreArchivo.equals("")) {
+            operaciones = Archivo.leerJson(nombreArchivo, new TypeReference<List<Operacion>>() {
+            });
+
+            p1.fromDTO(operaciones.get(0).getPolinomio1());
+            p2.fromDTO(operaciones.get(0).getPolinomio2());
+            p1.mostrar(lblPolinomio1);
+            p2.mostrar(lblPolinomio2);
         }
     }
 

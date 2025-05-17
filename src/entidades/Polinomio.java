@@ -131,4 +131,11 @@ public class Polinomio {
         return lista;
     }
 
+    public void fromDTO(List<Monomio> lista) {
+        cabeza = null;
+        for (Monomio monomio : lista) {
+            agregar(new Nodo(monomio.getExponente(), monomio.getCoeficiente()));
+        }
+    }
+
 }
